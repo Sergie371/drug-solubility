@@ -1,0 +1,21 @@
+# Параметры разбиения данных
+data_split:
+  test_size: 0.2
+  random_state: 42
+
+# Параметры для самописной линейной модели
+linear_model:
+  n_it: 3000
+  learn_rate: 0.15
+  metric: 'r2'
+
+# Сетки гиперпараметров для моделей (пример для SVR и деревьев)
+svr_params:
+  kernel: ['rbf', 'poly', 'linear']
+  C: [0.5, 1, 2]
+  epsilon: [0.05, 0.1, 0.2]
+
+tree_params:
+  n_estimators: [100, 200]
+  learning_rate: [0.05, 0.1]
+  max_depth: [3, 5]
