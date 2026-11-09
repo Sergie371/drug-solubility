@@ -15,6 +15,13 @@ import xgboost as xgb
 import lightgbm as lgb
 from catboost import CatBoostRegressor
 
+import argparse
+parser = argparse.ArgumentParser()
+parser.add_argument('--seed', type=int, default=42)
+args = parser.parse_args()
+
+Seed = args.seed
+
 # Создаем папки для результатов, если их нет
 os.makedirs('models', exist_ok=True)
 os.makedirs('results', exist_ok=True)
@@ -169,7 +176,7 @@ X_tree = dfn.drop(['Solubility'], axis=1)
 X_train_t, X_test_t, y_train_t, y_test_t = train_test_split(X_tree, y_tree, test_size=0.2, random_state=42, shuffle=True)
 
 # 4. Random Forest
-grid_rf = GridSearchCV(RandomForestRegressor(random_state=42), 
+grid_rf = GridSearchCV(RandomForestRegressor(random_state=Seed), 
                        {'n_estimators': [50, 100, 200], 'max_depth': [5, 10, None], 'min_samples_split': [2, 5]}, 
                        cv=5, scoring='r2', n_jobs=-1)
 grid_rf.fit(X_train_t, y_train_t)
@@ -181,7 +188,7 @@ metrics_dict['RandomForest'] = {'R2': r2, 'MAE': mae}
 joblib.dump(best_rf, 'models/rf_model.pkl')
 
 # 5. XGBoost
-grid_xgb = GridSearchCV(xgb.XGBRegressor(random_state=42), 
+grid_xgb = GridSearchCV(xgb.XGBRegressor(random_state=Seed), 
                         {'n_estimators': [100, 200], 'learning_rate': [0.05, 0.1], 'max_depth': [3, 5]}, 
                         cv=5, scoring='r2', n_jobs=-1)
 grid_xgb.fit(X_train_t, y_train_t)
@@ -193,7 +200,7 @@ metrics_dict['XGBoost'] = {'R2': r2, 'MAE': mae}
 joblib.dump(best_xgb, 'models/xgb_model.pkl')
 
 # 6. LightGBM
-grid_lgb = GridSearchCV(lgb.LGBMRegressor(random_state=42), 
+grid_lgb = GridSearchCV(lgb.LGBMRegressor(random_state=Seed), 
                         {'n_estimators': [100, 200], 'learning_rate': [0.05, 0.1], 'max_depth': [3, 5]}, 
                         cv=5, scoring='r2', n_jobs=-1)
 grid_lgb.fit(X_train_t, y_train_t)
@@ -205,7 +212,7 @@ metrics_dict['LightGBM'] = {'R2': r2, 'MAE': mae}
 joblib.dump(best_lgb, 'models/lgb_model.pkl')
 
 # 7. CatBoost
-grid_cat = GridSearchCV(CatBoostRegressor(random_seed=42, verbose=0), 
+grid_cat = GridSearchCV(CatBoostRegressor(random_seed=Seed, verbose=0), 
                         {'iterations': [100, 200], 'learning_rate': [0.05, 0.1], 'depth': [3, 5]}, 
                         cv=5, scoring='r2', n_jobs=-1)
 grid_cat.fit(X_train_t, y_train_t)

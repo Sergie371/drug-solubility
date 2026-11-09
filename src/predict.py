@@ -2,15 +2,27 @@ import joblib
 import json
 import pandas as pd
 import numpy as np
+import argparse
 
 # 1. Загружаем метрики, чтобы найти лучшую модель
 with open('results/metrics.json', 'r') as f:
     metrics = json.load(f)
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--model', type=str, default='best')
+args = parser.parse_args()
+
 # Ищем модель с самым высоким R2
 best_model_name = max(metrics, key=lambda k: metrics[k]['R2'])
 best_r2 = metrics[best_model_name]['R2']
-print(f"Лучшая модель по результатам обучения: {best_model_name} (R2 = {best_r2:.4f})")
+print(f"Лучшая модель по результатам обучения: {best_model_name}")
+
+if args.model == 'best':
+    best_model_name = max(metrics, key=lambda k: metrics[k]['R2'])
+    print(f"Лучшая модель: {best_model_name} (R2 = {metrics[best_model_name]['R2']:.4f})")
+else:
+    best_model_name = args.model
+    print(f"Выбранная модель: {args.model}")
 
 # Сопоставляем названия моделей из JSON с именами файлов .pkl
 model_files = {
