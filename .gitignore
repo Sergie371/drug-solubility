@@ -5,3 +5,6 @@ __pycache__/
 data/processed/
 models/
 results/
+catboost_info/
+notebooks/
+*:Zone.Identifier
